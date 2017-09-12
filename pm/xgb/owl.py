@@ -1,4 +1,5 @@
 # FROM https://www.kaggle.com/the1owl/redefining-treatment-0-57456  Sept 12 2017
+# This script gives a LB score of 0.57804, 5 fold average score: 0.922406
 
 from sklearn import *
 import sklearn
@@ -22,26 +23,19 @@ df_all = pd.concat((train, test), axis=0, ignore_index=True)
 df_all['Gene_Share'] = df_all.apply(lambda r: sum([1 for w in r['Gene'].split(' ') if w in r['Text'].split(' ')]), axis=1)
 df_all['Variation_Share'] = df_all.apply(lambda r: sum([1 for w in r['Variation'].split(' ') if w in r['Text'].split(' ')]), axis=1)
 
-#commented for Kaggle Limits
-############### the next lines take extra memory??
 for i in range(56):
     df_all['Gene_'+str(i)] = df_all['Gene'].map(lambda x: str(x[i]) if len(x)>i else '')
     df_all['Variation'+str(i)] = df_all['Variation'].map(lambda x: str(x[i]) if len(x)>i else '')
-##########################################################
-
 
 gen_var_lst = sorted(list(train.Gene.unique()) + list(train.Variation.unique()))
-print(len(gen_var_lst))
+print("len gen_var_lst1:", len(gen_var_lst))
 gen_var_lst = [x for x in gen_var_lst if len(x.split(' '))==1]
-print(len(gen_var_lst))
+print("len gen_var_lst2:", len(gen_var_lst))
 i_ = 0
-#commented for Kaggle Limits
-############### the next lines take extra memory??
 for gen_var_lst_itm in gen_var_lst:
-    if i_ % 100 == 0: print(i_)
+    if i_ % 100 == 0: print("i:", i_)
     df_all['GV_'+str(gen_var_lst_itm)] = df_all['Text'].map(lambda x: str(x).count(str(gen_var_lst_itm)))
     i_ += 1
-##########################################################
 
 for c in df_all.columns:
     if df_all[c].dtype == 'object':
@@ -83,22 +77,24 @@ fp = pipeline.Pipeline([
             ('standard', cust_regression_vals()),
             ('pi1', pipeline.Pipeline([('Gene', cust_txt_col('Gene')), ('count_Gene', feature_extraction.text.CountVectorizer(analyzer=u'char', ngram_range=(1, 8))), ('tsvd1', decomposition.TruncatedSVD(n_components=20, n_iter=25, random_state=12))])),
             ('pi2', pipeline.Pipeline([('Variation', cust_txt_col('Variation')), ('count_Variation', feature_extraction.text.CountVectorizer(analyzer=u'char', ngram_range=(1, 8))), ('tsvd2', decomposition.TruncatedSVD(n_components=20, n_iter=25, random_state=12))])),
-            #commented for Kaggle Limits
             ('pi3', pipeline.Pipeline([('Text', cust_txt_col('Text')), ('tfidf_Text', feature_extraction.text.TfidfVectorizer(ngram_range=(1, 2))), ('tsvd3', decomposition.TruncatedSVD(n_components=50, n_iter=25, random_state=12))]))
         ])
     )])
 
-train = fp.fit_transform(train); print(train.shape)
-test = fp.transform(test); print(test.shape)
+train = fp.fit_transform(train); print("Train shape:", train.shape)
+test = fp.transform(test); print("Test shape:", test.shape)
 
 y = y - 1 #fix for zero bound array
 
 denom = 0
-fold = 1 #Change to 5, 1 for Kaggle Limits
+eta = 0.03333
+max_depth = 4
+nrounds=1000
+fold = 5 #Change to 5, 1 for Kaggle Limits
 for i in range(fold):
     params = {
-        'eta': 0.03333,
-        'max_depth': 4,
+        'eta': eta,
+        'max_depth': max_depth,
         'objective': 'multi:softprob',
         'eval_metric': 'mlogloss',
         'num_class': 9,
@@ -107,9 +103,9 @@ for i in range(fold):
     }
     x1, x2, y1, y2 = model_selection.train_test_split(train, y, test_size=0.18, random_state=i)
     watchlist = [(xgb.DMatrix(x1, y1), 'train'), (xgb.DMatrix(x2, y2), 'valid')]
-    model = xgb.train(params, xgb.DMatrix(x1, y1), 1000,  watchlist, verbose_eval=50, early_stopping_rounds=100)
+    model = xgb.train(params, xgb.DMatrix(x1, y1), nrounds,  watchlist, verbose_eval=50, early_stopping_rounds=100)
     score1 = metrics.log_loss(y2, model.predict(xgb.DMatrix(x2), ntree_limit=model.best_ntree_limit), labels = list(range(9)))
-    print(score1)
+    print("Fold:", i, ",Score:", score1)
     #if score < 0.9:
     if denom != 0:
         pred = model.predict(xgb.DMatrix(test), ntree_limit=model.best_ntree_limit+80)
