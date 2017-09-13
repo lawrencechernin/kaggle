@@ -1,5 +1,6 @@
 # FROM https://www.kaggle.com/the1owl/redefining-treatment-0-57456  Sept 12 2017
 # This script gives a LB score of 0.57804, 5 fold average score: 0.922406
+#  updated:  n_components1=30(20) avg score: 0.92417, LB: 0.57633  best on 9/13 at position #179
 
 from sklearn import *
 import sklearn
@@ -70,14 +71,20 @@ class cust_txt_col(sklearn.base.BaseEstimator, sklearn.base.TransformerMixin):
         return x[self.key].apply(str)
 
 print('Pipeline...')
+n_components1=20
+n_components1=50
+n_components1=40
+n_components1=25
+n_components1=30
+n_components2=50
 fp = pipeline.Pipeline([
     ('union', pipeline.FeatureUnion(
         n_jobs = -1,
         transformer_list = [
             ('standard', cust_regression_vals()),
-            ('pi1', pipeline.Pipeline([('Gene', cust_txt_col('Gene')), ('count_Gene', feature_extraction.text.CountVectorizer(analyzer=u'char', ngram_range=(1, 8))), ('tsvd1', decomposition.TruncatedSVD(n_components=20, n_iter=25, random_state=12))])),
-            ('pi2', pipeline.Pipeline([('Variation', cust_txt_col('Variation')), ('count_Variation', feature_extraction.text.CountVectorizer(analyzer=u'char', ngram_range=(1, 8))), ('tsvd2', decomposition.TruncatedSVD(n_components=20, n_iter=25, random_state=12))])),
-            ('pi3', pipeline.Pipeline([('Text', cust_txt_col('Text')), ('tfidf_Text', feature_extraction.text.TfidfVectorizer(ngram_range=(1, 2))), ('tsvd3', decomposition.TruncatedSVD(n_components=50, n_iter=25, random_state=12))]))
+            ('pi1', pipeline.Pipeline([('Gene', cust_txt_col('Gene')), ('count_Gene', feature_extraction.text.CountVectorizer(analyzer=u'char', ngram_range=(1, 8))), ('tsvd1', decomposition.TruncatedSVD(n_components=n_components1, n_iter=25, random_state=12))])),
+            ('pi2', pipeline.Pipeline([('Variation', cust_txt_col('Variation')), ('count_Variation', feature_extraction.text.CountVectorizer(analyzer=u'char', ngram_range=(1, 8))), ('tsvd2', decomposition.TruncatedSVD(n_components=n_components1, n_iter=25, random_state=12))])),
+            ('pi3', pipeline.Pipeline([('Text', cust_txt_col('Text')), ('tfidf_Text', feature_extraction.text.TfidfVectorizer(ngram_range=(1, 2))), ('tsvd3', decomposition.TruncatedSVD(n_components=n_components2, n_iter=25, random_state=12))]))
         ])
     )])
 
