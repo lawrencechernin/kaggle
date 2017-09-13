@@ -1,0 +1,10 @@
+########################### RESULTS #########################
+scipt: owl.py
+base owl.py CV avg score: 0.922406, LB: 0.5704 #199 commit: 1ec7aae4e28326a4db9fe9329674a64e20b45a7c
+depth=5(4) CV avg score: 0.916294, LB: 0.58710 worse
+early_stopping_rounds=200(100) CV avg score: 0.922406 LB 0.57805
+n_components1=30(20) CV: 0.92417 LB 0.57633 new best #197 commit: 4b996d579c6a083c1f74776eaca4169ecad17350
+n_components1=50(20) CV: 0.929749 LB 0.60998
+n_components1=40(20) CV: 0.927191 no submitted
+n_components1=25(20) CV: 0.921756 LB 0.58630
+
