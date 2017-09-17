@@ -7,4 +7,16 @@ n_components1=30(20) CV: 0.92417 LB 0.57633 new best #197 commit: 4b996d579c6a08
 n_components1=50(20) CV: 0.929749 LB 0.60998
 n_components1=40(20) CV: 0.927191 no submitted
 n_components1=25(20) CV: 0.921756 LB 0.58630
+pi2 ngram_range(1,2) CV: 0.929666 LB 0.63893
+pi2 ngram_range(1,10) CV: 0.92007 LB: 0.59959 
+n_iter=50(25) in pipeline CV: 0.925136 LB: 0.58522
+n_iter=50(25) FOLD=4 in pipeline CV: 0.886404165448 LB: 0.60805
+n_components2=25(50) CV: 0.934051
+n_components2=75(50) CV: 0.920083 LB 0.56993 new best #118
 
+why CV is not predictive??? Recent entry had best local score and worst LB??
+
+
+decomposition.TruncatedSV  => PCA?
+change components for TFIDF  
+review TFIDF?

@@ -77,20 +77,28 @@ n_components1=40
 n_components1=25
 n_components1=30
 n_components2=50
+n_components2=75
+n_iter=25
+n_iter=50
+n_iter=25
 fp = pipeline.Pipeline([
     ('union', pipeline.FeatureUnion(
         n_jobs = -1,
         transformer_list = [
             ('standard', cust_regression_vals()),
-            ('pi1', pipeline.Pipeline([('Gene', cust_txt_col('Gene')), ('count_Gene', feature_extraction.text.CountVectorizer(analyzer=u'char', ngram_range=(1, 8))), ('tsvd1', decomposition.TruncatedSVD(n_components=n_components1, n_iter=25, random_state=12))])),
-            ('pi2', pipeline.Pipeline([('Variation', cust_txt_col('Variation')), ('count_Variation', feature_extraction.text.CountVectorizer(analyzer=u'char', ngram_range=(1, 8))), ('tsvd2', decomposition.TruncatedSVD(n_components=n_components1, n_iter=25, random_state=12))])),
-            ('pi3', pipeline.Pipeline([('Text', cust_txt_col('Text')), ('tfidf_Text', feature_extraction.text.TfidfVectorizer(ngram_range=(1, 2))), ('tsvd3', decomposition.TruncatedSVD(n_components=n_components2, n_iter=25, random_state=12))]))
+            ('pi1', pipeline.Pipeline([('Gene', cust_txt_col('Gene')), ('count_Gene', feature_extraction.text.CountVectorizer(analyzer=u'char', ngram_range=(1, 8))), ('tsvd1', decomposition.TruncatedSVD(n_components=n_components1, n_iter=n_iter, random_state=12))])),
+            ('pi2', pipeline.Pipeline([('Variation', cust_txt_col('Variation')), ('count_Variation', feature_extraction.text.CountVectorizer(analyzer=u'char', ngram_range=(1, 8))), ('tsvd2', decomposition.TruncatedSVD(n_components=n_components1, n_iter=n_iter, random_state=12))])),
+            ('pi3', pipeline.Pipeline([('Text', cust_txt_col('Text')), ('tfidf_Text', feature_extraction.text.TfidfVectorizer(ngram_range=(1, 2))), ('tsvd3', decomposition.TruncatedSVD(n_components=n_components2, n_iter=n_iter, random_state=12))]))
         ])
     )])
+print("TRAIN HEAD:", train.head())
+print("TRAIN columns:", train.columns)
 
 train = fp.fit_transform(train); print("Train shape:", train.shape)
 test = fp.transform(test); print("Test shape:", test.shape)
+print("TRAIN after ", train)
 
+print("y:", y)
 y = y - 1 #fix for zero bound array
 
 denom = 0
