@@ -1,6 +1,8 @@
 # FROM https://www.kaggle.com/the1owl/redefining-treatment-0-57456  Sept 12 2017
 # This script gives a LB score of 0.57804, 5 fold average score: 0.922406
 #  updated:  n_components1=30(20) avg score: 0.92417, LB: 0.57633  best on 9/13 at position #179
+#  9/19 standard_cv = 0.970832 * 0.9 CV: 0.920382 LB: 0.56718 new best #110 
+
 
 from sklearn import *
 import sklearn
@@ -81,16 +83,43 @@ n_components2=75
 n_iter=25
 n_iter=50
 n_iter=25
+
+# find the CV's of each component
+standard_cv = 0.970832 * 0.9
+pi1_cv = 1.18485
+pi2_cv = 1.62459
+pi3_cv = 0.989647
+sum_cvs = 1.0/standard_cv + 1.0/pi1_cv + 1.0/pi2_cv + 1.0/pi3_cv
+
+standard_wt = 1.0/standard_cv / sum_cvs
+pi1_wt = 1.0/pi1_cv / sum_cvs
+pi2_wt = 1.0/pi2_cv / sum_cvs
+pi3_wt = 1.0/pi3_cv / sum_cvs
+
+print("CV'S, standard_cv:", standard_cv, "pi1_cv:", pi1_cv, "pi2_cv:", pi2_cv, "pi3_cv:", pi3_cv)
+print("Weights, standard_wt:", standard_wt, "pi1_wt:", pi1_wt, "pi2_wt:", pi2_wt, "pi3_wt:", pi3_wt)
+
+
+
 fp = pipeline.Pipeline([
     ('union', pipeline.FeatureUnion(
         n_jobs = -1,
+
         transformer_list = [
             ('standard', cust_regression_vals()),
             ('pi1', pipeline.Pipeline([('Gene', cust_txt_col('Gene')), ('count_Gene', feature_extraction.text.CountVectorizer(analyzer=u'char', ngram_range=(1, 8))), ('tsvd1', decomposition.TruncatedSVD(n_components=n_components1, n_iter=n_iter, random_state=12))])),
             ('pi2', pipeline.Pipeline([('Variation', cust_txt_col('Variation')), ('count_Variation', feature_extraction.text.CountVectorizer(analyzer=u'char', ngram_range=(1, 8))), ('tsvd2', decomposition.TruncatedSVD(n_components=n_components1, n_iter=n_iter, random_state=12))])),
             ('pi3', pipeline.Pipeline([('Text', cust_txt_col('Text')), ('tfidf_Text', feature_extraction.text.TfidfVectorizer(ngram_range=(1, 2))), ('tsvd3', decomposition.TruncatedSVD(n_components=n_components2, n_iter=n_iter, random_state=12))]))
-        ])
-    )])
+        ],
+        transformer_weights = {
+            'standard': standard_wt,
+            'pi1': pi1_wt,
+            'pi2': pi1_wt,
+            'pi3': pi1_wt
+        },
+    )
+    )
+])
 print("TRAIN HEAD:", train.head())
 print("TRAIN columns:", train.columns)
 

@@ -13,10 +13,31 @@ n_iter=50(25) in pipeline CV: 0.925136 LB: 0.58522
 n_iter=50(25) FOLD=4 in pipeline CV: 0.886404165448 LB: 0.60805
 n_components2=25(50) CV: 0.934051
 n_components2=75(50) CV: 0.920083 LB 0.56993 new best #118
+n_components2=100(50) CV: 0.913578 LB 0.61207 worse
+n_components2=75(50) stop_words='english' CV: 
+
+
+* max_features
+* transformer_weights, see: /Users/lchernin/misc/hd/rf/xg.py
+
+* which of the four functions in pipeline is most important
+standard CV: 0.970832
+pi1 CV: 1.18485
+pi2 CV: 1.62459
+pi3 CV: 0.989647
+
+transformer_weighted CV: 0.920078 LB: 0.56993 tied with best
+maybe it does this automatically?
+
+
 
 why CV is not predictive??? Recent entry had best local score and worst LB??
+test_size=0.25(0.18) n_components2=100(50) CV: 0.91676 LB: 0.64328
+test_size=0.16(0.18) n_components2=75(50) CV: 0.909985 LB: 0.59464
 
 
 decomposition.TruncatedSV  => PCA?
 change components for TFIDF  
 review TFIDF?
+
+standard_cv = 0.970832 * 0.9 CV: 0.920382 LB: 0.56718 new best #110 commit
