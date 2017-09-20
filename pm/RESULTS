@@ -40,4 +40,20 @@ decomposition.TruncatedSV  => PCA?
 change components for TFIDF  
 review TFIDF?
 
-standard_cv = 0.970832 * 0.9 CV: 0.920382 LB: 0.56718 new best #110 commit
+standard_cv = 0.970832 * 0.9 CV: 0.920382 LB: 0.56718 new best #114 commit f916a2925fe6572f594e670d2cfb414be0f8effd
+standard_cv = 0.970832 * 0.8 CV: 0.920094 LB: 0.56993 
+pi3_cv = 0.989647 * 0.9 CV: 0.920078  LB: 0.56993
+TFIDF/stopwords=english crash
+TFIDF/max_features=2000 CV: 0.929658 LB: 0.68045
+TFIDF/max_features=10000 CV: 0.923816 LB: 0.63629
+max_depth=5(4)  CV: 0.910077 LB: 0.56646 new best #113 
+max_depth=6(4)  CV: 0.9043 LB: 0.55771 new best #86 commit: 
+
+
+TODO: 
+text remove slow words: mutation, cancer, tumor,fig, figure, et, al, table, data, analysis, analyze, study, method, result, conclusion, author, find, found, show, perform, demonstrate, evaluate, discuss
+
+stem text: SnowballC
+
+features count these words: pathogenic, benign, inhibitor and their ratios
+

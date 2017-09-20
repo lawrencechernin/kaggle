@@ -2,6 +2,7 @@
 # This script gives a LB score of 0.57804, 5 fold average score: 0.922406
 #  updated:  n_components1=30(20) avg score: 0.92417, LB: 0.57633  best on 9/13 at position #179
 #  9/19 standard_cv = 0.970832 * 0.9 CV: 0.920382 LB: 0.56718 new best #110 
+#  9/20 max_depth=6(4)  CV: 0.9043 LB: 0.55771 new best #86 
 
 
 from sklearn import *
@@ -132,7 +133,7 @@ y = y - 1 #fix for zero bound array
 
 denom = 0
 eta = 0.03333
-max_depth = 4
+max_depth = 6
 nrounds=1000
 fold = 5 #Change to 5, 1 for Kaggle Limits
 for i in range(fold):
