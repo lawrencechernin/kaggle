@@ -5,6 +5,7 @@
 #  9/20 max_depth=6(4)  CV: 0.9043 LB: 0.55771 new best #86 
 
 ### for stage 2, this script gives CV of 0.866846 and LB: 0.40674 came in position #12.
+## 09/26 max_depth=7(6) CV: 0.86259 LB: 0.36370 new best as #3!!!
 
 
 from sklearn import *
@@ -175,7 +176,7 @@ print("TRAIN after ", train)
 
 denom = 0
 eta = 0.03333
-max_depth = 6
+max_depth = 7
 nrounds=1000
 fold = 5 #Change to 5, 1 for Kaggle Limits
 for i in range(fold):
