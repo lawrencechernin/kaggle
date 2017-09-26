@@ -12,9 +12,9 @@ import numpy as np
 import xgboost as xgb
 
 train = pd.read_csv('../input/training_variants')
-test = pd.read_csv('../input/test_variants')
+test = pd.read_csv('../input/stage2_test_variants.csv')
 trainx = pd.read_csv('../input/training_text', sep="\|\|", engine='python', header=None, skiprows=1, names=["ID","Text"])
-testx = pd.read_csv('../input/test_text', sep="\|\|", engine='python', header=None, skiprows=1, names=["ID","Text"])
+testx = pd.read_csv('../input/stage2_test_text.csv', sep="\|\|", engine='python', header=None, skiprows=1, names=["ID","Text"])
 
 train = pd.merge(train, trainx, how='left', on='ID').fillna('')
 y = train['Class'].values
@@ -133,7 +133,7 @@ y = y - 1 #fix for zero bound array
 
 denom = 0
 eta = 0.03333
-max_depth = 6
+max_depth = 8
 nrounds=1000
 fold = 5 #Change to 5, 1 for Kaggle Limits
 for i in range(fold):
