@@ -4,6 +4,8 @@
 #  9/19 standard_cv = 0.970832 * 0.9 CV: 0.920382 LB: 0.56718 new best #110 
 #  9/20 max_depth=6(4)  CV: 0.9043 LB: 0.55771 new best #86 
 
+### for stage 2, this script gives CV of 0.866846 and LB: 0.40674 came in position #12.
+
 
 from sklearn import *
 import sklearn
@@ -11,19 +13,61 @@ import pandas as pd
 import numpy as np
 import xgboost as xgb
 
+# original stage 1 training files
 train = pd.read_csv('../input/training_variants')
-test = pd.read_csv('../input/stage2_test_variants.csv')
 trainx = pd.read_csv('../input/training_text', sep="\|\|", engine='python', header=None, skiprows=1, names=["ID","Text"])
+print("train:", train.shape,"\n",train.head(20))
+print("trainx:", trainx.shape,"\n",trainx.head())
+# now add in the testing for stage 1 as training here:
+train_test1 = pd.read_csv('../input/test_variants')
+trainx_test1 = pd.read_csv('../input/test_text', sep="\|\|", engine='python', header=None, skiprows=1, names=["ID","Text"])
+print("train_test1:", train_test1.shape,"\n", train_test1.head())
+print("trainx_test1:", trainx_test1.shape,"\n", trainx_test1.head())
+# read stage1 solutions
+df_labels_test1 = pd.read_csv('../input/stage1_solution_filtered.csv')
+df_labels_test1['Class'] = df_labels_test1.drop('ID', axis=1).idxmax(axis=1).str[5:]
+print("df_labels_test1:", df_labels_test1.shape,"\n", df_labels_test1.head())
+df_labels_test1.drop(['class1','class2','class3','class4','class5','class6','class7','class8','class9'],axis=1)
+extra_train = train_test1.merge(df_labels_test1[['ID', 'Class']], on='ID', how='right')
+print("extra_train:", extra_train.shape,"\n", extra_train.head())
+extra_train.drop('ID', axis=1)
+extra_train['ID'] = extra_train.index
+print("extra_train2:", extra_train.shape,"\n", extra_train.head())
+extra_trainx = trainx_test1.merge(df_labels_test1[['ID', 'Class']], on='ID', how='right')
+extra_trainx.drop('ID', axis=1,inplace=True)
+extra_trainx.drop('Class', axis=1,inplace=True)
+extra_trainx['ID'] = extra_trainx.index
+print("extra_trainx2:", extra_trainx.shape,"\n", extra_trainx.head())
+# adding in extra rows
+train=pd.concat([train,extra_train])
+trainx=pd.concat([trainx,extra_trainx])
+print("Data all ready!")
+print("train:", train.shape,"\n",train.head())
+print("Info on train:", train.info())
+print("trainx:", trainx.shape,"\n",trainx.head())
+print("Info on trainx:", trainx.info())
+train.fillna('')
+
+
+# now get stage2 test data
+test = pd.read_csv('../input/stage2_test_variants.csv')
 testx = pd.read_csv('../input/stage2_test_text.csv', sep="\|\|", engine='python', header=None, skiprows=1, names=["ID","Text"])
 
 train = pd.merge(train, trainx, how='left', on='ID').fillna('')
 y = train['Class'].values
+print("Type of y:", type(y))
+print("y:", y)  # numpy array
+print("y shape:", y.shape)
+y = y.astype(np.int) # convert string values from extra data to ints
+y = y - 1 #fix for zero bound array
 train = train.drop(['Class'], axis=1)
 
 test = pd.merge(test, testx, how='left', on='ID').fillna('')
 pid = test['ID'].values
 
 df_all = pd.concat((train, test), axis=0, ignore_index=True)
+print("df_all.columns", df_all.columns)
+print("df_all.head", df_all.head())
 df_all['Gene_Share'] = df_all.apply(lambda r: sum([1 for w in r['Gene'].split(' ') if w in r['Text'].split(' ')]), axis=1)
 df_all['Variation_Share'] = df_all.apply(lambda r: sum([1 for w in r['Variation'].split(' ') if w in r['Text'].split(' ')]), axis=1)
 
@@ -128,12 +172,10 @@ train = fp.fit_transform(train); print("Train shape:", train.shape)
 test = fp.transform(test); print("Test shape:", test.shape)
 print("TRAIN after ", train)
 
-print("y:", y)
-y = y - 1 #fix for zero bound array
 
 denom = 0
 eta = 0.03333
-max_depth = 7
+max_depth = 6
 nrounds=1000
 fold = 5 #Change to 5, 1 for Kaggle Limits
 for i in range(fold):

@@ -66,5 +66,7 @@ max_depth=8(4)
 
 ####################### stage 2 ######################
 owl.py, max_depth=8(6) CV: 0.909329  LB: 0.96744 #5 rank
+owl.py, max_depth=7(6) CV: 0.904749 LB: 0.97559 worse
+owl2.py with test from stage 1, CV: 0.866846 LB: 0.40674 new best #12 committed
 
 
