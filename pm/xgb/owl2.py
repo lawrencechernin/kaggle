@@ -176,8 +176,10 @@ print("TRAIN after ", train)
 
 denom = 0
 eta = 0.03333
-max_depth = 7
+max_depth = 6
 nrounds=1000
+early_stopping_rounds=100
+#early_stopping_rounds=200
 fold = 5 #Change to 5, 1 for Kaggle Limits
 for i in range(fold):
     params = {
@@ -191,7 +193,7 @@ for i in range(fold):
     }
     x1, x2, y1, y2 = model_selection.train_test_split(train, y, test_size=0.18, random_state=i)
     watchlist = [(xgb.DMatrix(x1, y1), 'train'), (xgb.DMatrix(x2, y2), 'valid')]
-    model = xgb.train(params, xgb.DMatrix(x1, y1), nrounds,  watchlist, verbose_eval=50, early_stopping_rounds=100)
+    model = xgb.train(params, xgb.DMatrix(x1, y1), nrounds,  watchlist, verbose_eval=50, early_stopping_rounds=early_stopping_rounds)
     score1 = metrics.log_loss(y2, model.predict(xgb.DMatrix(x2), ntree_limit=model.best_ntree_limit), labels = list(range(9)))
     print("Fold:", i, ",Score:", score1)
     #if score < 0.9:

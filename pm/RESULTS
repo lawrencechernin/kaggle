@@ -68,9 +68,22 @@ max_depth=8(4)
 owl.py, max_depth=8(6) CV: 0.909329  LB: 0.96744 #5 rank
 owl.py, max_depth=7(6) CV: 0.904749 LB: 0.97559 worse
 owl2.py with test from stage 1, CV: 0.866846 LB: 0.40674 new best #12 committed
-owl2.py same as prev, but max_depth=7(6) CV: 0.86259 LB: 0.36370 #3 committed 
+owl2.py same as prev, but max_depth=7(6) CV: 0.86259 LB: 0.36370 #3 committed  BEST CV SO FAR, so include it!
+owl2.py same as prev, but max_depth=8(6) CV: 0.865962 LB: 0.34411 new best
+owl2.py same as prev, but max_depth=10(6) CV: 0.8699 LB: 0.32604 new best
+owl2.py same as prev, but max_depth=12(6) CV: 0.874938 LB: 0.32161 new best
+owl2.py same as prev, but max_depth=15(6) CV: 0.882401 LB: 0.31877 new best #18
+owl2.py same as prev, but max_depth=20(6) CV: 0.881372 LB: 0.31393 new best #18
+owl2.py same as prev, but early_stopping_rounds=200(100) same as above.
+owl2.py same as prev,early_stopping_rounds=100, max_depth=30(6), CV: 0.883679
+ren.py  stage1 solution as stage2 submission, LB: 0.14012
+
 
 adjust weights?
 stopwords?
+try new features here: https://www.kaggle.com/danofer/genetic-variants-to-protein-features/output
 
+# take sub_ren.csv and replace any fillna values with high confidence predictions from owl2.py sub.csv
+combined.py replacement_threshold=0.8, replaced 64 values, uses max_depth=30(6), CV: 0.883679, LB: 0.16396
+combined.py replacement_threshold=0.94, replaced 11 values, uses max_depth=30(6), CV: 0.883679, LB: 0.15188
 
