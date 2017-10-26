@@ -1,0 +1,25 @@
+bing9954/1.py LB: 0.9954 #97
+bing9954/2.py sdict['lbs'] = 'pounds' sdict['mi²'] = 'square miles' sdict['m³'] = 'cubic meters' LB: 0.9954 unchanged
+bing9954/3.py more sdicts, same result on LB: 0.9954
+bing9954/4.py added more num2words handling cases, same on LB 0.9954
+ ==> manually edited e.g. awk -F, '{print $2}' !$ | grep 1  still the same LB: 0.9954
+bing9954/5.py add back in train and look for errors...
+bing9954/6.py took 4 and fixed four training examples... same LB:
+7.py same as 5, but look at errors using the big google data e.g. ../input/en_with_types/output-00000-of-00100 
+
+NEED to use context to do DATE vs CARDINAL, but how can we get the context?? Can we use bing99637 ???
+1) Review all kinds of errors and paste here
+Found Errors on input: 200 , modified to: two hundred ,golden: two o o ,class: DIGIT
+Found Errors on input: 1917 , modified to: nineteen seventeen ,golden: one thousand nine hundred seventeen ,class: CARDINAL
+...
+2) Review bing99637 to see if we can get the class
+3) modify into the main script.
+
+
+
+
+
+
+TODO:
+DARN, no change for line: 2016-04-04, should be like  March seventeen one thousand, nine hundred and fifty-eight
+
